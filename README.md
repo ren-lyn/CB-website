@@ -4,7 +4,7 @@ development of cliberduche corporation's website
 # Agile Development Timeline
 
 ## Project Overview
-**Project:** Construction Company Website with Database-Driven Company System  
+**Project:** Cliberduche Corporation Website  
 **Methodology:** Agile (Scrum)  
 **Duration:** 7 Weeks  
 **Final Submission:** March 2 – March 7  
