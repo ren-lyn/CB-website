@@ -1,0 +1,4 @@
+/* Resetting default Vite styles to allow Bootstrap to handle layout */
+#root {
+  width: 100%;
+}

@@ -1,0 +1,64 @@
+import { createContext, useContext, useState, useEffect } from 'react';
+import axiosClient from '../lib/axios';
+import { useNavigate } from 'react-router-dom';
+
+const AuthContext = createContext({
+    user: null,
+    login: async () => {},
+    logout: async () => {},
+    errors: []
+});
+
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [errors, setErrors] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    const csrf = () => axiosClient.get('/sanctum/csrf-cookie');
+
+    const getUser = async () => {
+        setLoading(true);
+        try {
+            const { data } = await axiosClient.get('/api/user');
+            setUser(data);
+        } catch (e) {
+            // Not logged in
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const login = async ({ email, password }) => {
+        await csrf();
+        setErrors([]);
+        try {
+            await axiosClient.post('/login', { email, password });
+            await getUser();
+            navigate('/');
+        } catch (e) {
+            if (e.response && e.response.status === 422) {
+                setErrors(e.response.data.errors);
+            }
+        }
+    };
+
+    const logout = async () => {
+        await axiosClient.post('/logout');
+        setUser(null);
+        navigate('/');
+    };
+
+    return (
+        <AuthContext.Provider value={{ user, login, logout, getUser, errors, loading }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+
+export const useAuth = () => useContext(AuthContext);
