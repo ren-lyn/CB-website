@@ -6,14 +6,20 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (user) {
+            navigate('/admin');
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         try {
-            await login(email, password);
+            await login({ email, password });
             navigate('/admin');
         } catch (err) {
             setError('Invalid credentials');

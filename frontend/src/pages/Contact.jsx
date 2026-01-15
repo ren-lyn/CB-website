@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api/axios';
+import api from '../lib/axios';
 
 export const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });

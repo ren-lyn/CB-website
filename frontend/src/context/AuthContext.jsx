@@ -1,66 +1,64 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api/axios';
+import { createContext, useContext, useState, useEffect } from 'react';
+import axiosClient from '../lib/axios';
+import { useNavigate } from 'react-router-dom';
 
-const AuthContext = createContext();
+const AuthContext = createContext({
+    user: null,
+    login: async () => {},
+    logout: async () => {},
+    errors: []
+});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [errors, setErrors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
-    const login = async (email, password) => {
+    // CSRF Protection for SPA
+    const csrf = () => axiosClient.get('/sanctum/csrf-cookie');
+
+    const getUser = async () => {
+        setLoading(true);
         try {
-            // CSRF cookie for Sanctum SPA (if needed, but we use API token for simplicity here)
-            // await api.get('/sanctum/csrf-cookie'); 
-            const response = await api.post('/login', { email, password });
-            const { token: newToken, user: newUser } = response.data;
-
-            localStorage.setItem('token', newToken);
-            setToken(newToken);
-            setUser(newUser);
-            return true;
-        } catch (error) {
-            console.error('Login failed', error);
-            throw error;
-        }
-    };
-
-    const logout = async () => {
-        try {
-            await api.post('/logout');
+            const { data } = await axiosClient.get('/api/user');
+            setUser(data);
         } catch (e) {
-            console.error(e);
-        } finally {
-            localStorage.removeItem('token');
-            setToken(null);
+            // Not logged in
             setUser(null);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            if (!token) {
-                setLoading(false);
-                return;
-            }
-            try {
-                const response = await api.get('/user');
-                setUser(response.data);
-            } catch (error) {
-                console.error(error);
-                localStorage.removeItem('token');
-                setToken(null);
-            } finally {
-                setLoading(false);
-            }
-        };
+        getUser();
+    }, []);
 
-        fetchUser();
-    }, [token]);
+    const login = async ({ email, password }) => {
+        await csrf();
+        setErrors([]);
+        try {
+            await axiosClient.post('/login', { email, password });
+            await getUser();
+            navigate('/admin');
+        } catch (e) {
+            if (e.response && e.response.status === 422) {
+                setErrors(e.response.data.errors);
+            }
+            throw e;
+        }
+    };
+
+    const logout = async () => {
+        await axiosClient.post('/logout');
+        setUser(null);
+        navigate('/');
+    };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, loading }}>
-            {!loading && children}
+        <AuthContext.Provider value={{ user, login, logout, getUser, errors, loading }}>
+            {children}
         </AuthContext.Provider>
     );
 };

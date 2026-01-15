@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api/axios';
+import api from '../lib/axios';
 
 const Projects = () => {
     const [projects, setProjects] = useState([]);
