@@ -1,0 +1,88 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+const Navbar = () => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const navLinks = [
+        { name: 'Home', path: '/' },
+        { name: 'About', path: '/about-us' },
+        { name: 'Services', path: '/services' },
+        { name: 'Projects', path: '/projects' },
+        { name: 'Resources', path: '/resources' },
+        { name: 'Contact', path: '/contact-us' },
+    ];
+
+    return (
+        <nav className="bg-white sticky top-0 z-50 shadow-sm font-sans">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-20">
+                    {/* Logo Section */}
+                    <div className="flex-shrink-0 flex items-center">
+                        <Link to="/" className="flex items-center gap-2">
+                            {/* <img src="/logo.png" alt="Logo" className="h-10" /> */}
+                            <span className="text-xl font-medium text-gray-800 tracking-tight">
+                                Cliberduche Corporation Logo
+                            </span>
+                        </Link>
+                    </div>
+
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex items-center space-x-8">
+                        {navLinks.map((item) => (
+                            <Link
+                                key={item.name}
+                                to={item.path}
+                                className="text-gray-600 hover:text-gray-900 font-medium transition-colors text-base"
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                        <Link
+                            to="/login"
+                            className="bg-gradient-to-r from-blue-400 to-green-500 hover:from-blue-500 hover:to-green-600 text-white font-medium py-2 px-6 rounded shadow-md transition-all transform hover:scale-105 ml-4"
+                        >
+                            Client Login
+                        </Link>
+                    </div>
+
+                    {/* Mobile Button */}
+                    <div className="-mr-2 flex items-center md:hidden">
+                        <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 p-2 focus:outline-none">
+                            <span className="sr-only">Open menu</span>
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Menu */}
+            {isOpen && (
+                <div className="md:hidden bg-white shadow-lg absolute w-full z-40">
+                    <div className="px-5 pt-4 pb-6 space-y-2">
+                        {navLinks.map((item) => (
+                            <Link
+                                key={item.name}
+                                to={item.path}
+                                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-company-blue hover:bg-gray-50"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                        <Link
+                            to="/login"
+                            className="block w-full text-center bg-gradient-to-r from-blue-400 to-green-500 text-white font-medium py-3 rounded mt-4"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            Client Login
+                        </Link>
+                    </div>
+                </div>
+            )}
+        </nav>
+    );
+};
+export default Navbar;
