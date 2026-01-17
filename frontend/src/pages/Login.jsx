@@ -20,7 +20,7 @@ const Login = () => {
         setError('');
         try {
             await login({ email, password });
-            navigate('/admin');
+            // navigate('/admin'); // Handled by AuthContext or useEffect
         } catch (err) {
             setError('Invalid credentials');
         }
