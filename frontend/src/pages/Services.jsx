@@ -49,7 +49,7 @@ const Services = () => {
                                         <div className="md:w-1/3 h-48 md:h-auto bg-gray-200 relative">
                                             {/* Placeholder for service image */}
                                             <img
-                                                src={service.image ? `${import.meta.env.VITE_API_URL}/storage/${service.image}` : "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"}
+                                                src={service.image ? (service.image.startsWith('http') ? service.image : `${import.meta.env.VITE_API_URL}/storage/${service.image}`) : "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"}
                                                 alt={service.title}
                                                 className="w-full h-full object-cover"
                                             />

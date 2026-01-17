@@ -1,6 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../lib/axios';
 
 const About = () => {
+    const [content, setContent] = useState({
+        mission: '',
+        vision: '',
+        background: ''
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchContent = async () => {
+            try {
+                const response = await api.get('/api/page-contents?page=about');
+                const data = response.data;
+                const newContent = { ...content };
+                
+                data.forEach(item => {
+                    if (newContent.hasOwnProperty(item.section_name)) {
+                        newContent[item.section_name] = item.content;
+                    }
+                });
+                
+                setContent(newContent);
+            } catch (error) {
+                console.error('Error fetching content:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchContent();
+    }, []);
+
+    if (loading) return <div className="text-center py-20">Loading...</div>;
+
     return (
         <div className="font-sans">
             {/* Hero */}
@@ -23,8 +57,8 @@ const About = () => {
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </div>
                         <h2 className="text-2xl font-bold text-company-dark mb-4">Our Mission</h2>
-                        <p className="text-gray-700 leading-relaxed italic">
-                            “We are a responsible land development company that provides high-quality backfill materials for land development projects and other infrastructures… adhering to environmental regulations of the Philippines while delivering value to our communities, partners, and stakeholders.”
+                        <p className="text-gray-700 leading-relaxed italic whitespace-pre-wrap">
+                            {content.mission || "Loading mission..."}
                         </p>
                     </div>
                     <div className="bg-green-50 p-8 rounded-xl shadow-sm border border-green-100">
@@ -32,8 +66,8 @@ const About = () => {
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </div>
                         <h2 className="text-2xl font-bold text-company-dark mb-4">Our Vision</h2>
-                        <p className="text-gray-700 leading-relaxed italic">
-                            “To be a highly respected, world-class natural resource land development company committed to international standards, environmental conservation, and sustainable projects.”
+                        <p className="text-gray-700 leading-relaxed italic whitespace-pre-wrap">
+                            {content.vision || "Loading vision..."}
                         </p>
                     </div>
                 </div>
@@ -69,15 +103,21 @@ const About = () => {
                 {/* Company Info */}
                 <div className="bg-gray-50 p-8 rounded-xl">
                     <h2 className="text-2xl font-bold mb-6 text-gray-800">Company Background</h2>
-                    <ul className="space-y-4 text-gray-700">
-                        <li><strong>Established:</strong> November 28, 2018</li>
-                        <li><strong>Registration:</strong> Securities and Exchange Commission (SEC)</li>
-                        <li><strong>Industry:</strong> Construction, Land Development, Backfill Materials Supply</li>
-                        <li><strong>Operating Areas:</strong> CALABARZON and nearby regions</li>
-                        <li className="pt-4 border-t border-gray-200 mt-4">
-                            <strong>Origin of Name:</strong> CLIBERDUCHE = <span className="text-blue-600 font-bold">CLI</span>maco + <span className="text-blue-600 font-bold">BER</span>onilla + <span className="text-blue-600 font-bold">DUCHE</span> (Piaduche)
-                        </li>
-                    </ul>
+                    <div className="text-gray-700 whitespace-pre-wrap">
+                        {content.background ? (
+                            content.background.split('\n').map((line, index) => {
+                                const parts = line.split(':');
+                                if (parts.length > 1) {
+                                    return (
+                                        <div key={index} className="mb-2">
+                                            <strong>{parts[0]}:</strong>{parts.slice(1).join(':')}
+                                        </div>
+                                    );
+                                }
+                                return <div key={index} className="mb-2">{line}</div>;
+                            })
+                        ) : "Loading background..."}
+                    </div>
                 </div>
             </div>
         </div>
