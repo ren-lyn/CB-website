@@ -13,6 +13,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('services', \App\Http\Controllers\ServiceController::class)->except(['index', 'show']);
     Route::apiResource('projects', \App\Http\Controllers\ProjectController::class)->except(['index', 'show']);
     Route::apiResource('inquiries', \App\Http\Controllers\InquiryController::class)->except(['store']);
+
+    Route::apiResource('machineries', \App\Http\Controllers\MachineryController::class)->except(['index', 'show']);
+    Route::apiResource('development-sites', \App\Http\Controllers\DevelopmentSiteController::class)->except(['index', 'show']);
+    Route::post('/page-contents', [\App\Http\Controllers\PageContentController::class, 'store']);
 });
 
 Route::get('/services', [\App\Http\Controllers\ServiceController::class, 'index']);
@@ -20,5 +24,13 @@ Route::get('/services/{service}', [\App\Http\Controllers\ServiceController::clas
 
 Route::get('/projects', [\App\Http\Controllers\ProjectController::class, 'index']);
 Route::get('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'show']);
+
+Route::get('/machineries', [\App\Http\Controllers\MachineryController::class, 'index']);
+Route::get('/machineries/{machinery}', [\App\Http\Controllers\MachineryController::class, 'show']);
+
+Route::get('/development-sites', [\App\Http\Controllers\DevelopmentSiteController::class, 'index']);
+Route::get('/development-sites/{site}', [\App\Http\Controllers\DevelopmentSiteController::class, 'show']);
+
+Route::get('/page-contents', [\App\Http\Controllers\PageContentController::class, 'index']);
 
 Route::post('/inquiries', [\App\Http\Controllers\InquiryController::class, 'store']);

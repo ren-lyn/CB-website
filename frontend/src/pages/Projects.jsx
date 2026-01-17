@@ -79,7 +79,7 @@ const ProjectCard = ({ project }) => (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group">
         <div className="h-56 bg-gray-200 relative overflow-hidden">
             <img
-                src={project.image ? `${import.meta.env.VITE_API_URL}/storage/${project.image}` : "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"}
+                src={project.image ? (project.image.startsWith('http') ? project.image : `${import.meta.env.VITE_API_URL}/storage/${project.image}`) : "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"}
                 alt={project.name}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
             />

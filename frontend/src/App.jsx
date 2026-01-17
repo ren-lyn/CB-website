@@ -1,5 +1,5 @@
 import React, { StrictMode } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
@@ -8,38 +8,47 @@ import { About, Services, Projects, Contact, Organization, Resources } from './p
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import AdminServices from './pages/admin/AdminServices';
-import AdminProjects from './pages/admin/AdminProjects';
-import AdminInquiries from './pages/admin/AdminInquiries';
-const Dashboard = () => <h1 className="text-2xl">Welcome to the Admin Dashboard</h1>;
 
+import AboutEditor from './pages/admin/AboutEditor';
+import ContactEditor from './pages/admin/ContactEditor';
+import ServiceManager from './pages/admin/ServiceManager';
+import ProjectManager from './pages/admin/ProjectManager';
+import ResourceManager from './pages/admin/ResourceManager';
+
+import { LoadingProvider } from './context/LoadingContext';
+import LoadingOverlay from './components/LoadingOverlay';
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="about-us" element={<About />} />
-          <Route path="services" element={<Services />} />
-          <Route path="projects" element={<Projects />} />
-          <Route path="resources" element={<Resources />} />
-          <Route path="organization" element={<Organization />} />
-          <Route path="contact-us" element={<Contact />} />
-        </Route>
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/admin" element={<ProtectedRoute />}>
-          <Route element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="services" element={<AdminServices />} />
-            <Route path="projects" element={<AdminProjects />} />
-            <Route path="inquiries" element={<AdminInquiries />} />
+    <LoadingProvider>
+      <LoadingOverlay />
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="about-us" element={<About />} />
+            <Route path="services" element={<Services />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="resources" element={<Resources />} />
+            <Route path="organization" element={<Organization />} />
+            <Route path="contact-us" element={<Contact />} />
           </Route>
-        </Route>
-      </Routes>
-    </AuthProvider>
+
+          <Route path="/login" element={<Login />} />
+
+          <Route path="/admin" element={<ProtectedRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route index element={<ResourceManager />} />
+              <Route path="about" element={<AboutEditor />} />
+              <Route path="contact" element={<ContactEditor />} />
+              <Route path="services" element={<ServiceManager />} />
+              <Route path="projects" element={<ProjectManager />} />
+              <Route path="resources" element={<ResourceManager />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </LoadingProvider>
   );
 }
 

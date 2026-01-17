@@ -25,5 +25,9 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
             'department_id' => $executive->id,
         ]);
+
+        $this->call([
+            ContentSeeder::class,
+        ]);
     }
 }
