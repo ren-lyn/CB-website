@@ -33,7 +33,12 @@ class ContentSeeder extends Seeder
             [
                 'page_name' => 'contact',
                 'section_name' => 'office_info',
-                'content' => "Lot 3739 National Highway, 3/F CBD Building\nBrgy. Pulo, Cabuyao City, Laguna\n\nEmail Us: cliberduche.corp@yahoo.com\nCall Us: 0917-123-4567"
+                'content' => json_encode([
+                    'address' => "Lot 3739 National Highway, 3/F CBD Building\nBrgy. Pulo, Cabuyao City, Laguna",
+                    'email' => 'cliberduche.corp@yahoo.com',
+                    'mobile' => '0917-123-4567',
+                    'landline' => '(049) 555-1234'
+                ])
             ]
         ];
 

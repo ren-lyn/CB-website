@@ -3,7 +3,12 @@ import axiosClient from '../../lib/axios';
 import { Save } from 'lucide-react';
 
 const ContactEditor = () => {
-    const [officeInfo, setOfficeInfo] = useState('');
+    const [officeInfo, setOfficeInfo] = useState({
+        address: '',
+        email: '',
+        mobile: '',
+        landline: ''
+    });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -18,7 +23,14 @@ const ContactEditor = () => {
             const data = response.data;
             const info = data.find(item => item.section_name === 'office_info');
             if (info) {
-                setOfficeInfo(info.content);
+                try {
+                    const parsed = JSON.parse(info.content);
+                    setOfficeInfo(parsed);
+                } catch (e) {
+                    // Fallback for legacy text content, try to map it or just reset
+                    console.warn('Could not parse office info JSON, resetting fields');
+                    setOfficeInfo({ address: info.content, email: '', mobile: '', landline: '' });
+                }
             }
         } catch (error) {
             console.error('Error fetching content:', error);
@@ -34,7 +46,7 @@ const ContactEditor = () => {
             await axiosClient.post('/api/page-contents', {
                 page_name: 'contact',
                 section_name: 'office_info',
-                content: officeInfo
+                content: JSON.stringify(officeInfo)
             });
             setMessage('Office Information saved successfully!');
             setTimeout(() => setMessage(''), 3000);
@@ -69,15 +81,49 @@ const ContactEditor = () => {
                         <Save size={18} /> Save
                     </button>
                 </div>
-                <p className="text-sm text-gray-500 mb-2">
-                    Enter address, phone, email, etc. You can use HTML tags for formatting if needed.
-                </p>
-                <textarea
-                    className="w-full h-64 p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-                    value={officeInfo}
-                    onChange={(e) => setOfficeInfo(e.target.value)}
-                    placeholder="Enter office information..."
-                />
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Office Address</label>
+                        <textarea
+                            className="w-full h-24 p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={officeInfo.address || ''}
+                            onChange={(e) => setOfficeInfo({ ...officeInfo, address: e.target.value })}
+                            placeholder="Lot 3739 National Highway..."
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input
+                            type="email"
+                            className="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={officeInfo.email || ''}
+                            onChange={(e) => setOfficeInfo({ ...officeInfo, email: e.target.value })}
+                            placeholder="cliberduche.corp@yahoo.com"
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                            <input
+                                type="text"
+                                className="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                value={officeInfo.mobile || ''}
+                                onChange={(e) => setOfficeInfo({ ...officeInfo, mobile: e.target.value })}
+                                placeholder="0917 123 4567"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Landline (Optional)</label>
+                            <input
+                                type="text"
+                                className="w-full p-3 border rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                value={officeInfo.landline || ''}
+                                onChange={(e) => setOfficeInfo({ ...officeInfo, landline: e.target.value })}
+                                placeholder="(049) 123 4567"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
