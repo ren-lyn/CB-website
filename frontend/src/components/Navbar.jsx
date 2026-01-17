@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.svg';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,10 +21,7 @@ const Navbar = () => {
                     {/* Logo Section */}
                     <div className="flex-shrink-0 flex items-center">
                         <Link to="/" className="flex items-center gap-2">
-                            {/* <img src="/logo.png" alt="Logo" className="h-10" /> */}
-                            <span className="text-xl font-medium text-gray-800 tracking-tight">
-                                Cliberduche Corporation Logo
-                            </span>
+                            <img src={logo} alt="Cliberduche Corporation Logo" className="h-16 md:h-20 lg:h-24" />
                         </Link>
                     </div>
 
